@@ -11,22 +11,30 @@
       integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
       crossorigin="anonymous"
     />
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-      crossorigin="anonymous"
-    ></script>
   </head>
 
   <body>
     <div class="container">
-      <table class="table table-striped table-hover">
+      <button
+        type="button"
+        class="btn btn-new-app mt-3 mb-3"
+        data-bs-toggle="modal"
+        data-bs-target="#new-app"
+      >
+        <img alt="new app icon" src="./plus.png" />
+      </button>
+
+      <table
+        class="table table-bordered border-primary table-striped table-hover"
+      >
         <thead>
           <tr>
             <th scope="col">ID</th>
             <th scope="col">App name</th>
             <th scope="col">Alias</th>
             <th scope="col">Policy</th>
+            <th scope="col">Agents Configs</th>
+            <th scope="col">Correlations Configs</th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -36,12 +44,132 @@
 
     <div
       class="modal fade"
+      id="new-app"
+      tabindex="-1"
+      aria-labelledby="new-app-modal"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 90vw">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="new-app-title">New App</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="settings" href="#"
+                  >Main</a
+                >
+              </li>
+            </ul>
+            <div class="m-3">
+              <form>
+                <div class="row mb-3">
+                  <label
+                    for="new-app-name-input"
+                    class="col-sm-2 col-form-label"
+                    >App name</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="new-app-name-input"
+                    />
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label
+                    for="new-app-alias-input"
+                    class="col-sm-2 col-form-label"
+                    >Identificator</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="new-app-alias-input"
+                    />
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label
+                    for="new-app-policy-input"
+                    class="col-sm-2 col-form-label"
+                    >Policy</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="new-app-policy-input"
+                    />
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label
+                    for="new-app-agent-input"
+                    class="col-sm-2 col-form-label"
+                    >Agents Configs</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="new-app-agent-input"
+                    />
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label
+                    for="new-app-correlation-input"
+                    class="col-sm-2 col-form-label"
+                    >Correlations Configs</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="new-app-correlation-input"
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+            <p class="text-center text-danger invisible new-app-error">
+              The Application ID already exist. Choose another one.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-new-app-submit btn-primary">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
       id="change-app"
       tabindex="-1"
       aria-labelledby="change-app-modal"
       aria-hidden="true"
     >
-      <div class="modal-dialog modal-dialog-centered" style="max-width: 800px">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 90vw">
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="change-app-title">Change App</h1>
@@ -98,8 +226,37 @@
                     />
                   </div>
                 </div>
+                <div class="row mb-3">
+                  <label for="app-agent-input" class="col-sm-2 col-form-label"
+                    >Agents Configs</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="app-agent-input"
+                    />
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label
+                    for="app-correlation-input"
+                    class="col-sm-2 col-form-label"
+                    >Correlations Configs</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="app-correlation-input"
+                    />
+                  </div>
+                </div>
               </form>
             </div>
+            <p class="text-center text-danger invisible error">
+              The Application ID is invalid
+            </p>
           </div>
           <div class="modal-footer">
             <button
@@ -109,27 +266,44 @@
             >
               Close
             </button>
-            <button type="button" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-primary btn-change-app-submit">
+              Save
+            </button>
           </div>
         </div>
       </div>
     </div>
 
     <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+    <script
       src="https://code.jquery.com/jquery-3.7.0.min.js"
       integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
     <script>
       const state = {};
 
-      function createRow(id, name, alias, policy_id) {
+      function createRow(
+        id,
+        name,
+        alias,
+        policy_id,
+        agent_configs,
+        correlations_configs
+      ) {
         return `
           <tr class="app-row">
             <td scope="col">${id}</td>
             <td class="app-name-cell" scope="col">${name}</td>
             <td class="app-alias-cell" scope="col">${alias}</td>
             <td class="app-policy-cell" scope="col">${policy_id}</td>
+            <td class="app-agent-cell" scope="col">${agent_configs}</td>
+            <td class="app-correlation-cell" scope="col">${correlations_configs}</td>
             <td scope="col">
               <button type="button" class="btn btn-change-app" data-bs-toggle="modal" data-bs-target="#change-app">
                 <img style="width: 20px;" alt="edit icon" src="./edit.png" />
@@ -138,38 +312,164 @@
           </tr>`;
       }
 
+      function fillAppForm(index) {
+        $("#app-name-input").val($(".app-name-cell")[index].textContent);
+        $("#app-alias-input").val($(".app-alias-cell")[index].textContent);
+        $("#app-alias-input").prop("disabled", true);
+        $("#app-policy-input").val($(".app-policy-cell")[index].textContent);
+        $("#app-agent-input").val($(".app-agent-cell")[index].textContent);
+        $("#app-correlation-input").val(
+          $(".app-correlation-cell")[index].textContent
+        );
+      }
+
+      function changeAppRow(
+        app_name,
+        policy_id,
+        agent_js_config,
+        correlations_config
+      ) {
+        $(".app-name-cell")[state.indexOfSelectedApp].textContent = app_name;
+        $(".app-policy-cell")[state.indexOfSelectedApp].textContent = policy_id;
+        $(".app-agent-cell")[state.indexOfSelectedApp].textContent =
+          agent_js_config;
+        $(".app-correlation-cell")[state.indexOfSelectedApp].textContent =
+          correlations_config;
+      }
+
+      function resetForm() {
+        $("#new-app-name-input").val("");
+        $("#new-app-alias-input").val("");
+        $("#new-app-policy-input").val("");
+        $("#new-app-agent-input").val("");
+        $("#new-app-correlation-input").val("");
+      }
+
       async function init() {
         await $.when($.ready);
 
-        const response = await fetch(
-          "http://checkstatus.website:8099/Face/App_List",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json;charset=UTF-8" },
-            body: JSON.stringify(""),
-          }
-        );
-        const apps = await response.json();
-        state.apps = apps;
+        try {
+          const response = await fetch(
+            "http://checkstatus.website:8099/Face/App_List",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json;charset=UTF-8" },
+              body: JSON.stringify(""),
+            }
+          );
+          const apps = await response.json();
+          state.apps = apps;
+        } catch (err) {
+          console.error(err);
+        }
 
-        const { app_table_ids, names, ids, policy_ids } = state.apps;
+        const {
+          app_table_ids,
+          names,
+          ids,
+          policy_ids,
+          agent_js_configs,
+          correlations_configs,
+        } = state.apps;
         app_table_ids.forEach((id, index) => {
           $(".container tbody").append(
-            createRow(id, names[index], ids[index], policy_ids[index])
+            createRow(
+              id,
+              names[index],
+              ids[index],
+              policy_ids[index],
+              agent_js_configs[index],
+              correlations_configs[index]
+            )
           );
         });
 
         $(".btn-change-app").each(function (index) {
           $(this).on("click", function () {
-            $("#app-name-input").val($(".app-name-cell")[index].textContent);
-            $("#app-alias-input").val($(".app-alias-cell")[index].textContent);
-            $("#app-alias-input").prop("disabled", true);
-            $("#app-policy-input").val(
-              $(".app-policy-cell")[index].textContent
-            );
+            state.indexOfSelectedApp = index;
+            fillAppForm(index);
           });
         });
+
+        $(".btn-change-app-submit").on("click", async function () {
+          let app_id = $("#app-alias-input").val();
+          let app_name = $("#app-name-input").val();
+          let policy_id = $("#app-policy-input").val();
+          let agent_js_config = $("#app-agent-input").val();
+          let correlations_config = $("#app-correlation-input").val();
+
+          try {
+            const response = await fetch(
+              "http://checkstatus.website:8099/Face/Update_app",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json;charset=UTF-8" },
+                body: JSON.stringify(
+                  `{"app_id": "${app_id}", "app_name": "${app_name}", "policy_id": ${policy_id}, "agent_js_config": "${agent_js_config}", "correlations_config": "${correlations_config}"}`
+                ),
+              }
+            );
+            const data = await response.json();
+
+            if (data.error === "0") {
+              $(".error").addClass("invisible");
+              $("#change-app").modal("toggle");
+              changeAppRow(
+                app_name,
+                policy_id,
+                agent_js_config,
+                correlations_config
+              );
+            } else {
+              $(".error").removeClass("invisible");
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        });
       }
+
+      $(".btn-new-app-submit").on("click", async function () {
+        let app_id = $("#new-app-alias-input").val();
+        let app_name = $("#new-app-name-input").val();
+        let policy_id = $("#new-app-policy-input").val();
+        let agent_js_config = $("#new-app-agent-input").val();
+        let correlations_config = $("#new-app-correlation-input").val();
+
+        try {
+          const response = await fetch(
+            "http://checkstatus.website:8099/Face/New_app",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json;charset=UTF-8" },
+              body: JSON.stringify(
+                `{"app_id": "${app_id}", "app_name": "${app_name}", "policy_id": ${policy_id}, "agent_js_config": "${agent_js_config}", "correlations_config": "${correlations_config}"}`
+              ),
+            }
+          );
+          const data = await response.json();
+
+          if (data.error === "0") {
+            $(".new-app-error").addClass("invisible");
+            resetForm();
+            $("#new-app").modal("toggle");
+            $(".container tbody").append(
+              createRow(
+                $(".app-row").length + 1,
+                app_name,
+                app_id,
+                policy_id,
+                agent_js_config,
+                correlations_config
+              )
+            );
+          } else {
+            $(".new-app-error").removeClass("invisible");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
 
       init();
     </script>
