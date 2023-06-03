@@ -262,6 +262,9 @@
             <p class="text-center text-danger invisible error">
               The Application ID is invalid
             </p>
+            <p class="app-error-empty text-center text-danger invisible error">
+              (*) You need to fill all the fields.
+            </p>
           </div>
           <div class="modal-footer">
             <button
@@ -425,6 +428,8 @@
 
             if (data.error === "0") {
               $(".error").addClass("invisible");
+              $(".app-error-empty").addClass("invisible");
+              resetForm();
               $("#change-app").modal("toggle");
               changeAppRow(
                 app_name,
@@ -437,6 +442,7 @@
             }
           } catch (err) {
             console.error(err);
+            $(".app-error-empty").removeClass("invisible");
           }
         });
       }
