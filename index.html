@@ -40,6 +40,8 @@
         </thead>
         <tbody></tbody>
       </table>
+
+      <canvas id="myChart"></canvas>
     </div>
 
     <div
@@ -74,7 +76,7 @@
                   <label
                     for="new-app-name-input"
                     class="col-sm-2 col-form-label"
-                    >App name</label
+                    >App name*</label
                   >
                   <div class="col-sm-10">
                     <input
@@ -88,7 +90,7 @@
                   <label
                     for="new-app-alias-input"
                     class="col-sm-2 col-form-label"
-                    >Identificator</label
+                    >Identificator*</label
                   >
                   <div class="col-sm-10">
                     <input
@@ -102,11 +104,11 @@
                   <label
                     for="new-app-policy-input"
                     class="col-sm-2 col-form-label"
-                    >Policy</label
+                    >Policy*</label
                   >
                   <div class="col-sm-10">
                     <input
-                      type="text"
+                      type="number"
                       class="form-control"
                       id="new-app-policy-input"
                     />
@@ -144,6 +146,9 @@
             </div>
             <p class="text-center text-danger invisible new-app-error">
               The Application ID already exist. Choose another one.
+            </p>
+            <p class="text-center text-danger invisible new-app-error-empty">
+              (*) You need to fill all the fields.
             </p>
           </div>
           <div class="modal-footer">
@@ -192,7 +197,7 @@
               <form>
                 <div class="row mb-3">
                   <label for="app-name-input" class="col-sm-2 col-form-label"
-                    >App name</label
+                    >App name*</label
                   >
                   <div class="col-sm-10">
                     <input
@@ -204,7 +209,7 @@
                 </div>
                 <div class="row mb-3">
                   <label for="app-alias-input" class="col-sm-2 col-form-label"
-                    >Identificator</label
+                    >Identificator*</label
                   >
                   <div class="col-sm-10">
                     <input
@@ -216,11 +221,11 @@
                 </div>
                 <div class="row mb-3">
                   <label for="app-policy-input" class="col-sm-2 col-form-label"
-                    >Policy</label
+                    >Policy*</label
                   >
                   <div class="col-sm-10">
                     <input
-                      type="text"
+                      type="number"
                       class="form-control"
                       id="app-policy-input"
                     />
@@ -312,6 +317,46 @@
           </tr>`;
       }
 
+      async function loadApps() {
+        try {
+          const response = await fetch(
+            "http://checkstatus.website:8099/Face/App_List",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json;charset=UTF-8" },
+              body: JSON.stringify(""),
+            }
+          );
+          const apps = await response.json();
+          state.apps = apps;
+        } catch (err) {
+          console.error(err);
+        }
+
+        $(".container tbody").html("");
+
+        const {
+          app_table_ids,
+          names,
+          ids,
+          policy_ids,
+          agent_js_configs,
+          correlations_configs,
+        } = state.apps;
+        app_table_ids.forEach((id, index) => {
+          $(".container tbody").append(
+            createRow(
+              id,
+              names[index],
+              ids[index],
+              policy_ids[index],
+              agent_js_configs[index],
+              correlations_configs[index]
+            )
+          );
+        });
+      }
+
       function fillAppForm(index) {
         $("#app-name-input").val($(".app-name-cell")[index].textContent);
         $("#app-alias-input").val($(".app-alias-cell")[index].textContent);
@@ -348,46 +393,13 @@
       async function init() {
         await $.when($.ready);
 
-        try {
-          const response = await fetch(
-            "http://checkstatus.website:8099/Face/App_List",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json;charset=UTF-8" },
-              body: JSON.stringify(""),
-            }
-          );
-          const apps = await response.json();
-          state.apps = apps;
-        } catch (err) {
-          console.error(err);
-        }
-
-        const {
-          app_table_ids,
-          names,
-          ids,
-          policy_ids,
-          agent_js_configs,
-          correlations_configs,
-        } = state.apps;
-        app_table_ids.forEach((id, index) => {
-          $(".container tbody").append(
-            createRow(
-              id,
-              names[index],
-              ids[index],
-              policy_ids[index],
-              agent_js_configs[index],
-              correlations_configs[index]
-            )
-          );
-        });
+        await loadApps();
 
         $(".btn-change-app").each(function (index) {
           $(this).on("click", function () {
             state.indexOfSelectedApp = index;
-            fillAppForm(index);
+
+            fillAppForm(state.indexOfSelectedApp);
           });
         });
 
@@ -451,6 +463,7 @@
 
           if (data.error === "0") {
             $(".new-app-error").addClass("invisible");
+            $(".new-app-error-empty").addClass("invisible");
             resetForm();
             $("#new-app").modal("toggle");
             $(".container tbody").append(
@@ -468,10 +481,387 @@
           }
         } catch (err) {
           console.error(err);
+          $(".new-app-error-empty").removeClass("invisible");
         }
       });
 
       init();
+    </script>
+    <script>
+      const ctx = $("#myChart");
+
+      const datasets = [
+        {
+          data: [0, 0, 0, 0, 0, 0, 180],
+          borderWidth: 1,
+          stack: "0",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 140],
+          borderWidth: 1,
+          stack: "0",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 270],
+          borderWidth: 1,
+          stack: "0",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 170],
+          borderWidth: 1,
+          stack: "1",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 200],
+          borderWidth: 1,
+          stack: "1",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 230],
+          borderWidth: 1,
+          stack: "1",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 220],
+          borderWidth: 1,
+          stack: "2",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 200],
+          borderWidth: 1,
+          stack: "2",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 370],
+          borderWidth: 1,
+          stack: "2",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 230],
+          borderWidth: 1,
+          stack: "3",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 220],
+          borderWidth: 1,
+          stack: "3",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 410],
+          borderWidth: 1,
+          stack: "3",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 230],
+          borderWidth: 1,
+          stack: "4",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 220],
+          borderWidth: 1,
+          stack: "4",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 410],
+          borderWidth: 1,
+          stack: "4",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 240],
+          borderWidth: 1,
+          stack: "5",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 220],
+          borderWidth: 1,
+          stack: "5",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 410],
+          borderWidth: 1,
+          stack: "5",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 240],
+          borderWidth: 1,
+          stack: "6",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 250],
+          borderWidth: 1,
+          stack: "6",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 440],
+          borderWidth: 1,
+          stack: "6",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 240],
+          borderWidth: 1,
+          stack: "7",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 250],
+          borderWidth: 1,
+          stack: "7",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 460],
+          borderWidth: 1,
+          stack: "7",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 230],
+          borderWidth: 1,
+          stack: "8",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 240],
+          borderWidth: 1,
+          stack: "8",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 430],
+          borderWidth: 1,
+          stack: "8",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 250],
+          borderWidth: 1,
+          stack: "9",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 260],
+          borderWidth: 1,
+          stack: "9",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 450],
+          borderWidth: 1,
+          stack: "9",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 230],
+          borderWidth: 1,
+          stack: "10",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 240],
+          borderWidth: 1,
+          stack: "10",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 450],
+          borderWidth: 1,
+          stack: "10",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 220],
+          borderWidth: 1,
+          stack: "11",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 240],
+          borderWidth: 1,
+          stack: "11",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 430],
+          borderWidth: 1,
+          stack: "11",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 220],
+          borderWidth: 1,
+          stack: "12",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 240],
+          borderWidth: 1,
+          stack: "12",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 450],
+          borderWidth: 1,
+          stack: "12",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 220],
+          borderWidth: 1,
+          stack: "13",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 250],
+          borderWidth: 1,
+          stack: "13",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 460],
+          borderWidth: 1,
+          stack: "13",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 210],
+          borderWidth: 1,
+          stack: "14",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 250],
+          borderWidth: 1,
+          stack: "14",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 470],
+          borderWidth: 1,
+          stack: "14",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 200],
+          borderWidth: 1,
+          stack: "15",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 230],
+          borderWidth: 1,
+          stack: "15",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 450],
+          borderWidth: 1,
+          stack: "15",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 200],
+          borderWidth: 1,
+          stack: "16",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 220],
+          borderWidth: 1,
+          stack: "16",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 420],
+          borderWidth: 1,
+          stack: "16",
+          backgroundColor: "#9336B4",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 80],
+          borderWidth: 1,
+          stack: "17",
+          backgroundColor: "#539165",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 90],
+          borderWidth: 1,
+          stack: "17",
+          backgroundColor: "#11009E",
+        },
+        {
+          data: [0, 0, 0, 0, 0, 0, 60],
+          borderWidth: 1,
+          stack: "17",
+          backgroundColor: "#9336B4",
+        },
+      ];
+
+      const chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: [
+            "18:18",
+            "18:36",
+            "18:54",
+            "19:12",
+            "19:30",
+            "19:48",
+            "20:06",
+          ],
+          datasets: datasets,
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: "Intercepted requests",
+            },
+            legend: {
+              display: false,
+            },
+          },
+          elements: {
+            bar: {
+              borderRadius: {
+                topLeft: 50,
+                topRight: 50,
+                bottomLeft: 50,
+                bottomRight: 50,
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              stacked: true,
+            },
+            x: {
+              stacked: true,
+            },
+          },
+        },
+      });
     </script>
   </body>
 </html>
